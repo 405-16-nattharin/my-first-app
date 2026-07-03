@@ -1,4 +1,4 @@
-import steamlit as st
+import streamlit as st
 st.title("แอปพลิเคชั่นแปลงปี พ.ศ. เป็น ค.ศ.")
 
 
