@@ -3,7 +3,13 @@ import streamlit as st
 
 st.title("⏱️ เกมเติมศัพท์จับเวลา")
 
-# 1. ช่องรับคำตอบ (เห็นโจทย์ทันที)
+# 1. ปุ่มกดเริ่มจับเวลา (อยู่ด้านบนสุด)
+if st.button("🚀 เริ่มจับเวลา (30 วินาที)"):
+    st.session_state.start = time.time()
+
+st.divider()
+
+# 2. ช่องรับคำตอบ (เห็นโจทย์ทันที)
 ans1 = st.text_input(
     "ข้อ 1: An `a _ _ l e` a day keeps the doctor away. 🍎", key="q1"
 )
@@ -14,10 +20,6 @@ ans2 = st.text_input("ข้อ 2: Cats love to eat `f _ s h`. 🐟", key="q2")
 # ----------------------------------------------------
 
 
-# 2. ปุ่มกดเริ่มจับเวลา
-if st.button("🚀 เริ่มจับเวลา (30 วินาที)"):
-    st.session_state.start = time.time()
-
 # 3. ระบบจับเวลาและการตรวจคำตอบ
 if "start" in st.session_state:
     time_left = int(30 - (time.time() - st.session_state.start))
@@ -26,13 +28,16 @@ if "start" in st.session_state:
         st.error(f"⏳ เหลือเวลา: {time_left} วินาที")
 
         if st.button("📥 ส่งคำตอบ"):
-            st.session_state.start = 0  # บังคับหมดเวลาทันที
+            st.session_state.start = 0  # บังคับหมดเวลาทันทีเพื่อตรวจคะแนน
             st.rerun()
 
         time.sleep(1)
         st.rerun()
 
     else:
+        # 🎈 ปล่อยลูกโป่งทันทีเมื่อตรวจคำตอบ!
+        st.balloons()
+
         st.warning("⏰ หมดเวลาแล้ว! มาตรวจคำตอบกัน")
         score = 0
 
