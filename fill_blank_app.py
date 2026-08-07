@@ -1,7 +1,7 @@
 import streamlit as st
 
 # 1. หัวข้อเกมจัดกึ่งกลาง
-st.markdown("<h1 style='text-align: center; color: #1E88E5;'>✏️ เกมเติมคำศัพท์ภาษาอังกฤษ🧩</h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center; color: #1E88E5;'>✏️เกมเติมคำศัพท์ภาษาอังกฤษ</h1>", unsafe_allow_html=True)
 st.write("ให้นักเรียนเติมคำศัพท์ภาษาอังกฤษที่ขาดหายไปในประโยคให้ถูกต้อง")
 
 st.divider()
