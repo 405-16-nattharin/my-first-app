@@ -6,6 +6,8 @@ st.title("⏱️ เกมเติมศัพท์จับเวลา")
 # 1. ปุ่มกดเริ่มจับเวลา (อยู่ด้านบนสุด)
 if st.button("🚀 เริ่มจับเวลา (30 วินาที)"):
     st.session_state.start = time.time()
+    st.session_state["q1"] = ""
+    st.session_state["q2"] = ""
 
 # 2. แถบแสดงเวลานับถอยหลัง (อยู่ต่อจากปุ่มเริ่มจับเวลา)
 if "start" in st.session_state:
