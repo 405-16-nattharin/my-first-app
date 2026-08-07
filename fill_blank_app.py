@@ -1,27 +1,47 @@
 import streamlit as st
 
 # 1. หัวข้อเกมจัดกึ่งกลาง
-st.markdown("<h1 style='text-align: center; color: #1E88E5;'>✏️ เกมเติมคำศัพท์ภาษาอังกฤษ 🧩</h1>", unsafe_allow_html=True)
-st.write("ให้นักเรียนเติมตัวอักษรหรือคำศัพท์ที่ขาดหายไปในประโยคให้ถูกต้อง")
+st.markdown("<h1 style='text-align: center; color: #1E88E5;'>✏️ เกมเติมคำศัพท์ภาษาอังกฤษ (2 ข้อ) 🧩</h1>", unsafe_allow_html=True)
+st.write("ให้นักเรียนเติมคำศัพท์ภาษาอังกฤษที่ขาดหายไปในประโยคให้ถูกต้อง")
 
 st.divider()
 
-# 2. แสดงโจทย์ประโยคภาษาอังกฤษ
-st.subheader("โจทย์ข้อที่ 1:")
-st.markdown("### An **`a _ _ l e`** a day keeps the doctor away. 🍎")
+# ==================== ข้อที่ 1 ====================
+st.subheader("ข้อที่ 1 🍎")
+st.markdown("ประโยค: **An `a _ _ l e` a day keeps the doctor away.**")
 
-# 3. ช่องรับคำตอบข้อความจากผู้ใช้
-user_answer = st.text_input("พิมพ์คำศัพท์ภาษาอังกฤษแบบเต็มคำที่ถูกต้อง:")
+# ช่องรับคำตอบข้อที่ 1
+ans1 = st.text_input("พิมพ์คำศัพท์ข้อที่ 1:", key="q1")
 
-# 4. ปุ่มตรวจคำตอบและการเช็กเงื่อนไข If-Elif-Else
-if st.button("ส่งคำตอบ 🎯"):
-    # แปลงข้อความที่พิมพ์เป็นตัวพิมพ์เล็ก และตัดสเปซหัว-ท้ายออก
-    clean_answer = user_answer.strip().lower()
+# ปุ่มตรวจคำตอบข้อที่ 1
+if st.button("ตรวจคำตอบข้อ 1 🎯"):
+    clean_ans1 = ans1.strip().lower()
     
-    if clean_answer == "apple":
+    if clean_ans1 == "apple":
         st.success("🎉 ถูกต้องแล้วครับ! คำตอบคือ 'apple' (แอปเปิล)")
         st.balloons()
-    elif clean_answer == "":
-        st.warning("⚠️ โปรดพิมพ์คำตอบในช่องก่อนกดส่งนะครับ")
+    elif clean_ans1 == "":
+        st.warning("⚠️ โปรดพิมพ์คำตอบข้อที่ 1 ก่อนกดส่งนะครับ")
     else:
-        st.error(f"❌ ยังไม่ถูกต้องครับ! คุณตอบว่า '{user_answer}' ลองใหม่อีกครั้งนะ")
+        st.error(f"❌ ยังไม่ถูกต้องครับ! คุณตอบว่า '{ans1}' ลองใหม่อีกครั้งนะ")
+
+st.divider()
+
+# ==================== ข้อที่ 2 ====================
+st.subheader("ข้อที่ 2 🐟")
+st.markdown("ประโยค: **Cats love to eat `f _ s h`.**")
+
+# ช่องรับคำตอบข้อที่ 2
+ans2 = st.text_input("พิมพ์คำศัพท์ข้อที่ 2:", key="q2")
+
+# ปุ่มตรวจคำตอบข้อที่ 2
+if st.button("ตรวจคำตอบข้อ 2 🎯"):
+    clean_ans2 = ans2.strip().lower()
+    
+    if clean_ans2 == "fish":
+        st.success("🎉 ถูกต้องแล้วครับ! คำตอบคือ 'fish' (ปลา)")
+        st.snow()  # เปลี่ยนเอฟเฟกต์เป็นหิมะตก
+    elif clean_ans2 == "":
+        st.warning("⚠️ โปรดพิมพ์คำตอบข้อที่ 2 ก่อนกดส่งนะครับ")
+    else:
+        st.error(f"❌ ยังไม่ถูกต้องครับ! คุณตอบว่า '{ans2}' ลองใหม่อีกครั้งนะ")
