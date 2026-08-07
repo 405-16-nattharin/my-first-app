@@ -7,9 +7,18 @@ st.title("⏱️ เกมเติมศัพท์จับเวลา")
 if st.button("🚀 เริ่มจับเวลา (30 วินาที)"):
     st.session_state.start = time.time()
 
+# 2. แถบแสดงเวลานับถอยหลัง (ย้ายมาไว้ต่อจากปุ่มเริ่มจับเวลาทันที)
+if "start" in st.session_state:
+    time_left = int(30 - (time.time() - st.session_state.start))
+
+    if time_left > 0:
+        st.error(f"⏳ เหลือเวลา: {time_left} วินาที")
+    else:
+        st.warning("⏰ หมดเวลาทำข้อสอบแล้ว!")
+
 st.divider()
 
-# 2. ช่องรับคำตอบ (เห็นโจทย์ทันที)
+# 3. ช่องรับคำตอบ (เห็นโจทย์ทันที)
 ans1 = st.text_input(
     "ข้อ 1: An `a _ _ l e` a day keeps the doctor away. 🍎", key="q1"
 )
@@ -20,13 +29,11 @@ ans2 = st.text_input("ข้อ 2: Cats love to eat `f _ s h`. 🐟", key="q2")
 # ----------------------------------------------------
 
 
-# 3. ระบบจับเวลาและการตรวจคำตอบ
+# 4. ปุ่มส่งคำตอบ และระบบตรวจคะแนน
 if "start" in st.session_state:
     time_left = int(30 - (time.time() - st.session_state.start))
 
     if time_left > 0:
-        st.error(f"⏳ เหลือเวลา: {time_left} วินาที")
-
         if st.button("📥 ส่งคำตอบ"):
             st.session_state.start = 0  # บังคับหมดเวลาทันทีเพื่อตรวจคะแนน
             st.rerun()
@@ -38,9 +45,7 @@ if "start" in st.session_state:
         # 🎈 ปล่อยลูกโป่งทันทีเมื่อตรวจคำตอบ!
         st.balloons()
 
-        st.warning("⏰ หมดเวลาแล้ว! มาตรวจคำตอบกัน")
         score = 0
-
         u_ans1 = st.session_state.get("q1", "").strip().lower()
         u_ans2 = st.session_state.get("q2", "").strip().lower()
 
