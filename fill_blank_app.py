@@ -1,70 +1,47 @@
 import time
 import streamlit as st
 
-# 1. บันทึกเวลาเริ่มเล่นเกมไว้ใน session_state
-if "start_time" not in st.session_state:
-    st.session_state.start_time = time.time()
+st.title("⏱️ เกมเติมศัพท์จับเวลา (30 วินาที)")
 
-# 2. หัวข้อเกมจัดกึ่งกลาง
-st.markdown(
-    "<h1 style='text-align: center; color: #1E88E5;'>✏️ เกมเติมคำศัพท์ภาษาอังกฤษ 🧩</h1>",
-    unsafe_allow_html=True,
-)
-st.write("ให้นักเรียนสลับ Tab ด้านล่างเพื่อทำทีละข้อ")
+# 1. กดปุ่มเริ่มเกม
+if st.button("🚀 เริ่มเล่นเกม!"):
+    st.session_state.start = time.time()
 
-st.divider()
+# 2. เมื่อเกมเริ่มแล้ว ให้แสดงโจทย์
+if "start" in st.session_state:
+    time_left = int(30 - (time.time() - st.session_state.start))
 
-# 3. สร้าง Tabs แยกข้อ 1 และ ข้อ 2 ออกจากกัน
-tab1, tab2 = st.tabs(["📌 ข้อที่ 1 (🍎)", "📌 ข้อที่ 2 (🐟)"])
+    if time_left > 0:
+        st.error(f"⏳ เหลือเวลา: {time_left} วินาที")
 
-# ==================== TAB 1: ข้อที่ 1 ====================
-with tab1:
-    st.subheader("ข้อที่ 1 🍎")
-    st.markdown("ประโยค: **An `a _ _ l e` a day keeps the doctor away.**")
+        # โจทย์ 2 ข้อ
+        ans1 = st.text_input(
+            "ข้อ 1: An `a _ _ l e` a day keeps the doctor away. 🍎", key="q1"
+        )
+        ans2 = st.text_input("ข้อ 2: Cats love to eat `f _ s h`. 🐟", key="q2")
 
-    ans1 = st.text_input("พิมพ์คำศัพท์ข้อที่ 1:", key="q1")
+        if st.button("📥 ส่งคำตอบ"):
+            st.session_state.start = 0  # บังคับหมดเวลาทันทีเพื่อตรวจคะแนน
+            st.rerun()
 
-    if st.button("ตรวจคำตอบข้อ 1 🎯"):
-        elapsed = round(time.time() - st.session_state.start_time, 2)
-        clean_ans1 = ans1.strip().lower()
+    else:
+        # 3. เวลาหมด -> คิดคะแนนและบอกข้อที่ผิด
+        st.warning("⏰ หมดเวลาแล้ว! มาตรวจคำตอบกัน")
+        score = 0
 
-        if clean_ans1 == "apple":
-            st.success(
-                f"🎉 ถูกต้องแล้วครับ! คำตอบคือ 'apple' (แอปเปิล) — ⏱️ ใช้เวลา {elapsed} วินาที"
-            )
-            st.balloons()
-        elif clean_ans1 == "":
-            st.warning("⚠️ โปรดพิมพ์คำตอบข้อที่ 1 ก่อนกดส่งนะครับ")
+        # ตรวจข้อ 1
+        if ans1.strip().lower() == "apple":
+            st.success("✅ ข้อ 1: ถูกต้อง (apple)")
+            score += 1
         else:
-            st.error(
-                f"❌ ยังไม่ถูกต้องครับ! คุณตอบว่า '{ans1}' ลองใหม่อีกครั้งนะ — ⏱️ ใช้เวลา {elapsed} วินาที"
-            )
+            st.error(f"❌ ข้อ 1: ผิด! คุณตอบ '{ans1}' (เฉลย: apple)")
 
-# ==================== TAB 2: ข้อที่ 2 ====================
-with tab2:
-    st.subheader("ข้อที่ 2 🐟")
-    st.markdown("ประโยค: **Cats love to eat `f _ s h`.**")
-
-    ans2 = st.text_input("พิมพ์คำศัพท์ข้อที่ 2:", key="q2")
-
-    if st.button("ตรวจคำตอบข้อ 2 🎯"):
-        elapsed = round(time.time() - st.session_state.start_time, 2)
-        clean_ans2 = ans2.strip().lower()
-
-        if clean_ans2 == "fish":
-            st.success(
-                f"🎉 ถูกต้องแล้วครับ! คำตอบคือ 'fish' (ปลา) — ⏱️ ใช้เวลา {elapsed} วินาที"
-            )
-            st.snow()
-        elif clean_ans2 == "":
-            st.warning("⚠️ โปรดพิมพ์คำตอบข้อที่ 2 ก่อนกดส่งนะครับ")
+        # ตรวจข้อ 2
+        if ans2.strip().lower() == "fish":
+            st.success("✅ ข้อ 2: ถูกต้อง (fish)")
+            score += 1
         else:
-            st.error(
-                f"❌ ยังไม่ถูกต้องครับ! คุณตอบว่า '{ans2}' ลองใหม่อีกครั้งนะ — ⏱️ ใช้เวลา {elapsed} วินาที"
-            )
+            st.error(f"❌ ข้อ 2: ผิด! คุณตอบ '{ans2}' (เฉลย: fish)")
 
-# ==================== ปุ่มรีเซ็ตเวลา ====================
-st.divider()
-if st.button("🔄 เริ่มจับเวลาใหม่"):
-    st.session_state.start_time = time.time()
-    st.rerun()
+        st.balloons() if score == 2 else None
+        st.info(f"🏆 ได้คะแนนรวม: {score} / 2 คะแนน")
