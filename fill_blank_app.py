@@ -1,40 +1,41 @@
 import time
 import streamlit as st
 
-st.title("⏱️ เกมเติมศัพท์จับเวลา (30 วินาที)")
+st.title("⏱️ เกมเติมศัพท์จับเวลา")
 
-# 1. กดปุ่มเริ่มเกม
-if st.button("🚀 เริ่มเล่นเกม!"):
+# 1. ช่องรับคำตอบ (เห็นโจทย์ทันที)
+ans1 = st.text_input(
+    "ข้อ 1: An `a _ _ l e` a day keeps the doctor away. 🍎", key="q1"
+)
+ans2 = st.text_input("ข้อ 2: Cats love to eat `f _ s h`. 🐟", key="q2")
+
+# ----------------------------------------------------
+# ✏️ [พื้นที่สำหรับนักเรียน]: เพิ่มโจทย์ข้อ 3 และ ข้อ 4 ตรงนี้
+# ----------------------------------------------------
+
+
+# 2. ปุ่มกดเริ่มจับเวลา
+if st.button("🚀 เริ่มจับเวลา (30 วินาที)"):
     st.session_state.start = time.time()
 
-# 2. เมื่อเกมเริ่มแล้ว ให้แสดงโจทย์
+# 3. ระบบจับเวลาและการตรวจคำตอบ
 if "start" in st.session_state:
     time_left = int(30 - (time.time() - st.session_state.start))
 
     if time_left > 0:
         st.error(f"⏳ เหลือเวลา: {time_left} วินาที")
 
-        # โจทย์ 2 ข้อ (ใช้ st.session_state ดึงค่าที่พิมพ์)
-        ans1 = st.text_input(
-            "ข้อ 1: An `a _ _ l e` a day keeps the doctor away. 🍎",
-            key="q1",
-        )
-        ans2 = st.text_input("ข้อ 2: Cats love to eat `f _ s h`. 🐟", key="q2")
-
         if st.button("📥 ส่งคำตอบ"):
             st.session_state.start = 0  # บังคับหมดเวลาทันที
             st.rerun()
 
-        # ⚡ เพิ่ม 2 บรรทัดนี้เพื่อสั่งให้หน้ารีเฟรชเวลานับถอยหลังทุก 1 วินาที
         time.sleep(1)
         st.rerun()
 
     else:
-        # 3. เวลาหมด -> คิดคะแนนและบอกข้อที่ผิด
         st.warning("⏰ หมดเวลาแล้ว! มาตรวจคำตอบกัน")
         score = 0
 
-        # ดึงค่าคำตอบจาก key ใน session_state
         u_ans1 = st.session_state.get("q1", "").strip().lower()
         u_ans2 = st.session_state.get("q2", "").strip().lower()
 
@@ -52,4 +53,8 @@ if "start" in st.session_state:
         else:
             st.error(f"❌ ข้อ 2: ผิด! คุณตอบ '{u_ans2}' (เฉลย: fish)")
 
-        st.info(f"🏆 ได้คะแนนรวม: {score} / 2 คะแนน")
+        # ----------------------------------------------------
+        # ✏️ [พื้นที่สำหรับนักเรียน]: เพิ่มการตรวจข้อ 3 และ ข้อ 4 ตรงนี้
+        # ----------------------------------------------------
+
+        st.info(f"🏆 ได้คะแนนรวม: {score} คะแนน")
