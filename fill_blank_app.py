@@ -7,7 +7,7 @@ st.title("⏱️ เกมเติมศัพท์จับเวลา")
 if st.button("🚀 เริ่มจับเวลา (30 วินาที)"):
     st.session_state.start = time.time()
 
-# 2. แถบแสดงเวลานับถอยหลัง (ย้ายมาไว้ต่อจากปุ่มเริ่มจับเวลาทันที)
+# 2. แถบแสดงเวลานับถอยหลัง (อยู่ต่อจากปุ่มเริ่มจับเวลา)
 if "start" in st.session_state:
     time_left = int(30 - (time.time() - st.session_state.start))
 
@@ -29,7 +29,7 @@ ans2 = st.text_input("ข้อ 2: Cats love to eat `f _ s h`. 🐟", key="q2")
 # ----------------------------------------------------
 
 
-# 4. ปุ่มส่งคำตอบ และระบบตรวจคะแนน
+# 4. ปุ่มส่งคำตอบ และระบบตรวจคะแนน (แจ้งผิดแบบไม่เฉลย)
 if "start" in st.session_state:
     time_left = int(30 - (time.time() - st.session_state.start))
 
@@ -51,17 +51,17 @@ if "start" in st.session_state:
 
         # ตรวจข้อ 1
         if u_ans1 == "apple":
-            st.success("✅ ข้อ 1: ถูกต้อง (apple)")
+            st.success("✅ ข้อ 1: ถูกต้อง")
             score += 1
         else:
-            st.error(f"❌ ข้อ 1: ผิด! คุณตอบ '{u_ans1}' (เฉลย: apple)")
+            st.error(f"❌ ข้อ 1: ยังไม่ถูกต้อง (คุณตอบ '{u_ans1}')")
 
         # ตรวจข้อ 2
         if u_ans2 == "fish":
-            st.success("✅ ข้อ 2: ถูกต้อง (fish)")
+            st.success("✅ ข้อ 2: ถูกต้อง")
             score += 1
         else:
-            st.error(f"❌ ข้อ 2: ผิด! คุณตอบ '{u_ans2}' (เฉลย: fish)")
+            st.error(f"❌ ข้อ 2: ยังไม่ถูกต้อง (คุณตอบ '{u_ans2}')")
 
         # ----------------------------------------------------
         # ✏️ [พื้นที่สำหรับนักเรียน]: เพิ่มการตรวจข้อ 3 และ ข้อ 4 ตรงนี้
