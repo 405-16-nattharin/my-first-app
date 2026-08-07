@@ -29,7 +29,7 @@ ans2 = st.text_input("ข้อ 2: Cats love to eat `f _ s h`. 🐟", key="q2")
 # ----------------------------------------------------
 
 
-# 4. ปุ่มส่งคำตอบ และระบบตรวจคะแนน (แจ้งผิดแบบไม่เฉลย)
+# 4. ปุ่มส่งคำตอบ และระบบตรวจคะแนน
 if "start" in st.session_state:
     time_left = int(30 - (time.time() - st.session_state.start))
 
@@ -68,3 +68,9 @@ if "start" in st.session_state:
         # ----------------------------------------------------
 
         st.info(f"🏆 ได้คะแนนรวม: {score} คะแนน")
+
+        # 🎯 เช็กว่าได้คะแนนเต็มหรือไม่ (หากเพิ่มเป็น 4 ข้ออย่าลืมแก้เลข 2 เป็น 4)
+        if score == 2:
+            st.success("🎉 You win!")
+        else:
+            st.error("💀 You lose!")
