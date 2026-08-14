@@ -3,16 +3,16 @@ import streamlit as st
 
 st.title("⏱️ เกมเติมศัพท์จับเวลา")
 
-# 1. ปุ่มเริ่มเล่นเกม (ล้างทุกอย่างให้เหมือนเปิดแอปใหม่)
+# 1. จัดการค่าเริ่มต้นเมื่อกดปุ่ม "เริ่มเล่นเกม"
 if st.button("🎮 เริ่มเล่นเกม"):
-    st.session_state.clear()  # ล้าง session ทั้งหมด
+    st.session_state.clear()  # ล้างความจำทั้งหมด
     st.session_state.start = time.time()  # บันทึกเวลาเริ่ม
-    st.session_state.is_ended = False  # กำหนดให้ยังไม่จบเกม
-    st.session_state["q1"] = ""  # เคลียร์กล่องข้อความ 1
-    st.session_state["q2"] = ""  # เคลียร์กล่องข้อความ 2
+    st.session_state.is_ended = False  # สถานะ: กำลังเล่นอยู่
+    st.session_state["q1"] = ""  # บังคับล้างช่องพิมพ์ข้อ 1
+    st.session_state["q2"] = ""  # บังคับล้างช่องพิมพ์ข้อ 2
     st.rerun()
 
-# 2. แถบแสดงเวลานับถอยหลัง (แสดงเฉพาะตอนกำลังเล่นอยู่)
+# 2. แถบแสดงเวลานับถอยหลัง (แสดงเมื่อกำลังเล่นเกมอยู่)
 if "start" in st.session_state:
     time_left = int(30 - (time.time() - st.session_state.start))
 
@@ -21,9 +21,10 @@ if "start" in st.session_state:
 
 st.divider()
 
-# 3. ช่องรับคำตอบ
+# 3. ช่องรับคำตอบ (ดึงและบันทึกค่าผ่าน session_state โดยตรง)
 ans1 = st.text_input(
-    "ข้อ 1: An `a _ _ l e` a day keeps the doctor away. 🍎", key="q1"
+    "ข้อ 1: An `a _ _ l e` a day keeps the doctor away. 🍎",
+    key="q1",
 )
 ans2 = st.text_input("ข้อ 2: Cats love to eat `f _ s h`. 🐟", key="q2")
 
@@ -39,23 +40,21 @@ if "start" in st.session_state:
     # --- กรณีที่ 1: กำลังเล่นเกมอยู่ ---
     if time_left > 0 and not st.session_state.get("is_ended", False):
         if st.button("📥 ส่งคำตอบ"):
-            # บันทึกคำตอบสุดท้ายไว้ก่อนเคลียร์
-            st.session_state.final_q1 = ans1
-            st.session_state.final_q2 = ans2
-            st.session_state.is_ended = True  # จบเกม
+            st.session_state.final_q1 = st.session_state.get("q1", "")
+            st.session_state.final_q2 = st.session_state.get("q2", "")
+            st.session_state.is_ended = True
             st.rerun()
 
         time.sleep(1)
         st.rerun()
 
-    # --- กรณีที่ 2: หมดเวลา หรือ กดส่งคำตอบแล้ว (ตรวจคำตอบและแสดงผล) ---
+    # --- กรณีที่ 2: หมดเวลา หรือ กดส่งคำตอบแล้ว ---
     elif time_left <= 0 or st.session_state.get("is_ended", False):
-        # ถ้าเป็นการหมดเวลาโดยไม่ได้กดปุ่มส่ง ให้ดึงค่าปัจจุบันมาบันทึกไว้
         if "final_q1" not in st.session_state:
-            st.session_state.final_q1 = ans1
-            st.session_state.final_q2 = ans2
+            st.session_state.final_q1 = st.session_state.get("q1", "")
+            st.session_state.final_q2 = st.session_state.get("q2", "")
 
-        st.session_state.is_ended = True  # ยืนยันสถานะจบเกม
+        st.session_state.is_ended = True
         st.warning("⏰ หมดเวลาทำข้อสอบแล้ว!")
         st.balloons()
 
