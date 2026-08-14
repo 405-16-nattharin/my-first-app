@@ -5,7 +5,7 @@ st.title("⏱️ เกมเติมศัพท์จับเวลา")
 
 
 # ----------------------------------------------------
-# 📌 ฟังก์ชัน MessageBox แสดงผลลัพธ์แบบป๊อปอัป (Modal Dialog)
+# 📌 ฟังก์ชัน MessageBox แสดงผลลัพธ์แบบป๊อปอัป
 # ----------------------------------------------------
 @st.dialog("📊 สรุปผลการเล่นเกม")
 def show_result_dialog(ans1, ans2):
@@ -42,11 +42,19 @@ def show_result_dialog(ans1, ans2):
 
 
 # ----------------------------------------------------
-# 1. ปุ่มเริ่มเล่นเกม
+# 1. ปุ่มเริ่มเล่นเกม (เคลียร์กล่องข้อความ และ รีเซ็ตเวลา)
 # ----------------------------------------------------
 if st.button("🎮 เริ่มเล่นเกม"):
-    st.session_state.clear()  # ล้างค่าทั้งหมด
-    st.session_state.start = time.time()  # เริ่มเวลา
+    # 🧹 ลบค่าคำตอบออกจาก Session State โดยตรงเพื่อเคลียร์กล่องข้อความ
+    if "q1" in st.session_state:
+        del st.session_state["q1"]
+    if "q2" in st.session_state:
+        del st.session_state["q2"]
+
+    # ✏️ [พื้นที่สำหรับนักเรียน]: หากมีข้อ 3, 4 ให้เพิ่ม del st.session_state['q3'] ตรงนี้
+
+    st.session_state.start = time.time()  # เริ่มนับเวลาใหม่
+    st.session_state.is_ended = False  # ปิด MessageBox
     st.rerun()
 
 # 2. แถบแสดงเวลานับถอยหลัง
@@ -72,7 +80,7 @@ ans2 = st.text_input("ข้อ 2: Cats love to eat `f _ s h`. 🐟", key="q2")
 # ----------------------------------------------------
 
 
-# 4. ปุ่มส่งคำตอบ และการเรียกใช้ MessageBox
+# 4. ปุ่มส่งคำตอบ
 if "start" in st.session_state and not st.session_state.get("is_ended", False):
     if st.button("📥 ส่งคำตอบ"):
         st.session_state.is_ended = True
@@ -81,6 +89,6 @@ if "start" in st.session_state and not st.session_state.get("is_ended", False):
     time.sleep(1)
     st.rerun()
 
-# 5. เมื่อจบเกม (ส่งคำตอบ หรือ เวลาหมด) -> เด้ง MessageBox ขึ้นมา
+# 5. แสดง MessageBox เมื่อหมดเวลาหรือกดส่งคำตอบ
 if st.session_state.get("is_ended", False):
     show_result_dialog(ans1, ans2)
