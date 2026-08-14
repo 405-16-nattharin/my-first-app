@@ -4,6 +4,21 @@ import streamlit as st
 st.title("⏱️ เกมเติมศัพท์จับเวลา")
 
 
+# 📌 ฟังก์ชันสำหรับเคลียร์ค่าในกล่องข้อความและรีเซ็ตเกมเมื่อกดปุ่ม "เริ่มเล่นเกม"
+def reset_game():
+    # 🧹 ลบค่าคำตอบเก่าออกจาก session_state
+    if "q1" in st.session_state:
+        del st.session_state["q1"]
+    if "q2" in st.session_state:
+        del st.session_state["q2"]
+
+    # ✏️ [พื้นที่สำหรับนักเรียน]: เพิ่ม del st.session_state["q3"] และ q4 ตรงนี้
+
+    # ⏱️ ตั้งค่าเวลาเริ่มใหม่ และปิดป๊อปอัป
+    st.session_state.start = time.time()
+    st.session_state.is_ended = False
+
+
 # ----------------------------------------------------
 # 📌 ฟังก์ชัน MessageBox แสดงผลลัพธ์แบบป๊อปอัป
 # ----------------------------------------------------
@@ -42,20 +57,9 @@ def show_result_dialog(ans1, ans2):
 
 
 # ----------------------------------------------------
-# 1. ปุ่มเริ่มเล่นเกม (เคลียร์กล่องข้อความ และ รีเซ็ตเวลา)
+# 1. ปุ่มเริ่มเล่นเกม (ผูกฟังก์ชัน reset_game ผ่าน on_click)
 # ----------------------------------------------------
-if st.button("🎮 เริ่มเล่นเกม"):
-    # 🧹 ลบค่าคำตอบออกจาก Session State โดยตรงเพื่อเคลียร์กล่องข้อความ
-    if "q1" in st.session_state:
-        del st.session_state["q1"]
-    if "q2" in st.session_state:
-        del st.session_state["q2"]
-
-    # ✏️ [พื้นที่สำหรับนักเรียน]: หากมีข้อ 3, 4 ให้เพิ่ม del st.session_state['q3'] ตรงนี้
-
-    st.session_state.start = time.time()  # เริ่มนับเวลาใหม่
-    st.session_state.is_ended = False  # ปิด MessageBox
-    st.rerun()
+st.button("🎮 เริ่มเล่นเกม", on_click=reset_game)
 
 # 2. แถบแสดงเวลานับถอยหลัง
 if "start" in st.session_state and not st.session_state.get("is_ended", False):
