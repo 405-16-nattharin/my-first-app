@@ -3,16 +3,18 @@ import streamlit as st
 
 st.title("⏱️ เกมเติมศัพท์จับเวลา")
 
-# 1. จัดการค่าเริ่มต้นเมื่อกดปุ่ม "เริ่มเล่นเกม"
+# 1. ปุ่มเริ่มเล่นเกม (เจนเกมรอบใหม่เพื่อเปลี่ยน Key กล่องข้อความ)
 if st.button("🎮 เริ่มเล่นเกม"):
-    st.session_state.clear()  # ล้างความจำทั้งหมด
+    st.session_state.game_id = time.time()  # ไอดีรหัสเกมรอบนี้
     st.session_state.start = time.time()  # บันทึกเวลาเริ่ม
     st.session_state.is_ended = False  # สถานะ: กำลังเล่นอยู่
-    st.session_state["q1"] = ""  # บังคับล้างช่องพิมพ์ข้อ 1
-    st.session_state["q2"] = ""  # บังคับล้างช่องพิมพ์ข้อ 2
     st.rerun()
 
-# 2. แถบแสดงเวลานับถอยหลัง (แสดงเมื่อกำลังเล่นเกมอยู่)
+# ถ้าเปิดหน้าเว็บมาครั้งแรกสุด ให้สร้าง game_id ตั้งต้นไว้ก่อน
+if "game_id" not in st.session_state:
+    st.session_state.game_id = 0
+
+# 2. แถบแสดงเวลานับถอยหลัง
 if "start" in st.session_state:
     time_left = int(30 - (time.time() - st.session_state.start))
 
@@ -21,12 +23,14 @@ if "start" in st.session_state:
 
 st.divider()
 
-# 3. ช่องรับคำตอบ (ดึงและบันทึกค่าผ่าน session_state โดยตรง)
+# 3. ช่องรับคำตอบ (ใช้ key แบบไดนามิกโดยต่อท้ายด้วย game_id)
+q1_key = f"q1_{st.session_state.game_id}"
+q2_key = f"q2_{st.session_state.game_id}"
+
 ans1 = st.text_input(
-    "ข้อ 1: An `a _ _ l e` a day keeps the doctor away. 🍎",
-    key="q1",
+    "ข้อ 1: An `a _ _ l e` a day keeps the doctor away. 🍎", key=q1_key
 )
-ans2 = st.text_input("ข้อ 2: Cats love to eat `f _ s h`. 🐟", key="q2")
+ans2 = st.text_input("ข้อ 2: Cats love to eat `f _ s h`. 🐟", key=q2_key)
 
 # ----------------------------------------------------
 # ✏️ [พื้นที่สำหรับนักเรียน]: เพิ่มโจทย์ข้อ 3 และ ข้อ 4 ตรงนี้
@@ -40,8 +44,8 @@ if "start" in st.session_state:
     # --- กรณีที่ 1: กำลังเล่นเกมอยู่ ---
     if time_left > 0 and not st.session_state.get("is_ended", False):
         if st.button("📥 ส่งคำตอบ"):
-            st.session_state.final_q1 = st.session_state.get("q1", "")
-            st.session_state.final_q2 = st.session_state.get("q2", "")
+            st.session_state.final_q1 = ans1
+            st.session_state.final_q2 = ans2
             st.session_state.is_ended = True
             st.rerun()
 
@@ -51,8 +55,8 @@ if "start" in st.session_state:
     # --- กรณีที่ 2: หมดเวลา หรือ กดส่งคำตอบแล้ว ---
     elif time_left <= 0 or st.session_state.get("is_ended", False):
         if "final_q1" not in st.session_state:
-            st.session_state.final_q1 = st.session_state.get("q1", "")
-            st.session_state.final_q2 = st.session_state.get("q2", "")
+            st.session_state.final_q1 = ans1
+            st.session_state.final_q2 = ans2
 
         st.session_state.is_ended = True
         st.warning("⏰ หมดเวลาทำข้อสอบแล้ว!")
