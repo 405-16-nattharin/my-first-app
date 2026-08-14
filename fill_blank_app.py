@@ -3,27 +3,31 @@ import streamlit as st
 
 st.title("⏱️ เกมเติมศัพท์จับเวลา")
 
-# 1. ปุ่มเริ่มเล่นเกม (เจนเกมรอบใหม่เพื่อเปลี่ยน Key กล่องข้อความ)
+# 1. ปุ่มเริ่มเล่นเกม
 if st.button("🎮 เริ่มเล่นเกม"):
-    st.session_state.game_id = time.time()  # ไอดีรหัสเกมรอบนี้
-    st.session_state.start = time.time()  # บันทึกเวลาเริ่ม
-    st.session_state.is_ended = False  # สถานะ: กำลังเล่นอยู่
+    st.session_state.game_id = time.time()  # สุ่ม key ใหม่เพื่อเคลียร์กล่องข้อความ
+    st.session_state.start = time.time()  # เริ่มนับเวลา
+    st.session_state.is_ended = False  # ซ่อนส่วนตรวจคำตอบ
     st.rerun()
 
-# ถ้าเปิดหน้าเว็บมาครั้งแรกสุด ให้สร้าง game_id ตั้งต้นไว้ก่อน
+# ตั้งค่าเริ่มต้นเมื่อเปิดแอปครั้งแรกสุด
 if "game_id" not in st.session_state:
     st.session_state.game_id = 0
 
 # 2. แถบแสดงเวลานับถอยหลัง
-if "start" in st.session_state:
+if "start" in st.session_state and not st.session_state.get("is_ended", False):
     time_left = int(30 - (time.time() - st.session_state.start))
 
-    if time_left > 0 and not st.session_state.get("is_ended", False):
+    if time_left > 0:
         st.error(f"⏳ เหลือเวลา: {time_left} วินาที")
+    else:
+        # ถ้าเวลาหมด ให้เปลี่ยนสถานะเป็นจบเกม
+        st.session_state.is_ended = True
+        st.rerun()
 
 st.divider()
 
-# 3. ช่องรับคำตอบ (ใช้ key แบบไดนามิกโดยต่อท้ายด้วย game_id)
+# 3. ช่องรับคำตอบ ( dynamic key เคลียร์กล่องสะอาดแน่นอน)
 q1_key = f"q1_{st.session_state.game_id}"
 q2_key = f"q2_{st.session_state.game_id}"
 
@@ -37,56 +41,47 @@ ans2 = st.text_input("ข้อ 2: Cats love to eat `f _ s h`. 🐟", key=q2_key
 # ----------------------------------------------------
 
 
-# 4. ปุ่มส่งคำตอบ และระบบตรวจคะแนน
-if "start" in st.session_state:
-    time_left = int(30 - (time.time() - st.session_state.start))
-
-    # --- กรณีที่ 1: กำลังเล่นเกมอยู่ ---
-    if time_left > 0 and not st.session_state.get("is_ended", False):
-        if st.button("📥 ส่งคำตอบ"):
-            st.session_state.final_q1 = ans1
-            st.session_state.final_q2 = ans2
-            st.session_state.is_ended = True
-            st.rerun()
-
-        time.sleep(1)
+# 4. ปุ่มส่งคำตอบ
+if "start" in st.session_state and not st.session_state.get("is_ended", False):
+    if st.button("📥 ส่งคำตอบ"):
+        st.session_state.is_ended = True  # สั่งให้จบเกมและแสดงผลลัพธ์
         st.rerun()
 
-    # --- กรณีที่ 2: หมดเวลา หรือ กดส่งคำตอบแล้ว ---
-    elif time_left <= 0 or st.session_state.get("is_ended", False):
-        if "final_q1" not in st.session_state:
-            st.session_state.final_q1 = ans1
-            st.session_state.final_q2 = ans2
+    time.sleep(1)
+    st.rerun()
 
-        st.session_state.is_ended = True
-        st.warning("⏰ หมดเวลาทำข้อสอบแล้ว!")
-        st.balloons()
+# ----------------------------------------------------
+# 5. ส่วนตรวจคำตอบ (จะทำงานเมื่อ st.session_state.is_ended == True เท่านั้น)
+# ----------------------------------------------------
+if st.session_state.get("is_ended", False):
+    st.warning("⏰ หมดเวลาทำข้อสอบแล้ว!")
+    st.balloons()
 
-        score = 0
-        u_ans1 = st.session_state.final_q1.strip().lower()
-        u_ans2 = st.session_state.final_q2.strip().lower()
+    score = 0
+    u_ans1 = ans1.strip().lower()
+    u_ans2 = ans2.strip().lower()
 
-        # ตรวจข้อ 1
-        if u_ans1 == "apple":
-            st.success("✅ ข้อ 1: ถูกต้อง")
-            score += 1
-        else:
-            st.error(f"❌ ข้อ 1: ยังไม่ถูกต้อง (คุณตอบ '{u_ans1}')")
+    # ตรวจข้อ 1
+    if u_ans1 == "apple":
+        st.success("✅ ข้อ 1: ถูกต้อง")
+        score += 1
+    else:
+        st.error(f"❌ ข้อ 1: ยังไม่ถูกต้อง (คุณตอบ '{u_ans1}')")
 
-        # ตรวจข้อ 2
-        if u_ans2 == "fish":
-            st.success("✅ ข้อ 2: ถูกต้อง")
-            score += 1
-        else:
-            st.error(f"❌ ข้อ 2: ยังไม่ถูกต้อง (คุณตอบ '{u_ans2}')")
+    # ตรวจข้อ 2
+    if u_ans2 == "fish":
+        st.success("✅ ข้อ 2: ถูกต้อง")
+        score += 1
+    else:
+        st.error(f"❌ ข้อ 2: ยังไม่ถูกต้อง (คุณตอบ '{u_ans2}')")
 
-        # ----------------------------------------------------
-        # ✏️ [พื้นที่สำหรับนักเรียน]: เพิ่มการตรวจข้อ 3 และ ข้อ 4 ตรงนี้
-        # ----------------------------------------------------
+    # ----------------------------------------------------
+    # ✏️ [พื้นที่สำหรับนักเรียน]: เพิ่มการตรวจข้อ 3 และ ข้อ 4 ตรงนี้
+    # ----------------------------------------------------
 
-        st.info(f"🏆 ได้คะแนนรวม: {score} คะแนน")
+    st.info(f"🏆 ได้คะแนนรวม: {score} คะแนน")
 
-        if score == 2:
-            st.success("🎉 You win!")
-        else:
-            st.error("💀 You lose!")
+    if score == 2:
+        st.success("🎉 You win!")
+    else:
+        st.error("💀 You lose!")
