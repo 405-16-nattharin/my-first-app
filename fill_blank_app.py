@@ -3,55 +3,46 @@ import streamlit as st
 
 st.title("⏱️ เกมเติมศัพท์จับเวลา")
 
-# 1. ปุ่มเริ่มเล่นเกม
+# 1. ปุ่มเริ่มเล่นเกม (ล้างความจำทั้งหมด แล้วสั่งรันบรรทัดแรกใหม่ทันที)
 if st.button("🎮 เริ่มเล่นเกม"):
-    st.session_state.game_id = time.time()  # สุ่ม key ใหม่เพื่อเคลียร์กล่องข้อความ
-    st.session_state.start = time.time()  # เริ่มนับเวลา
-    st.session_state.is_ended = False  # ซ่อนส่วนตรวจคำตอบ
-    st.rerun()
+    st.session_state.clear()  # ล้างค่าในความจำทั้งหมด
+    st.session_state.start = time.time()  # บันทึกเวลาเริ่มเล่นรอบใหม่
+    st.rerun()  # ⚡ สั่งให้กลับไปรันบรรทัดแรกใหม่ทันที!
 
-# ตั้งค่าเริ่มต้นเมื่อเปิดแอปครั้งแรกสุด
-if "game_id" not in st.session_state:
-    st.session_state.game_id = 0
-
-# 2. แถบแสดงเวลานับถอยหลัง
+# 2. แถบแสดงเวลานับถอยหลัง (แสดงเฉพาะเมื่อกดเริ่มเล่นเกมแล้ว)
 if "start" in st.session_state and not st.session_state.get("is_ended", False):
     time_left = int(30 - (time.time() - st.session_state.start))
 
     if time_left > 0:
         st.error(f"⏳ เหลือเวลา: {time_left} วินาที")
     else:
-        # ถ้าเวลาหมด ให้เปลี่ยนสถานะเป็นจบเกม
         st.session_state.is_ended = True
         st.rerun()
 
 st.divider()
 
-# 3. ช่องรับคำตอบ ( dynamic key เคลียร์กล่องสะอาดแน่นอน)
-q1_key = f"q1_{st.session_state.game_id}"
-q2_key = f"q2_{st.session_state.game_id}"
-
+# 3. ช่องรับคำตอบ (หน้าจอจะถูกล้างใหม่ใสสะอาด)
 ans1 = st.text_input(
-    "ข้อ 1: An `a _ _ l e` a day keeps the doctor away. 🍎", key=q1_key
+    "ข้อ 1: An `a _ _ l e` a day keeps the doctor away. 🍎", key="q1"
 )
-ans2 = st.text_input("ข้อ 2: Cats love to eat `f _ s h`. 🐟", key=q2_key)
+ans2 = st.text_input("ข้อ 2: Cats love to eat `f _ s h`. 🐟", key="q2")
 
 # ----------------------------------------------------
 # ✏️ [พื้นที่สำหรับนักเรียน]: เพิ่มโจทย์ข้อ 3 และ ข้อ 4 ตรงนี้
 # ----------------------------------------------------
 
 
-# 4. ปุ่มส่งคำตอบ
+# 4. ปุ่มส่งคำตอบ (แสดงเฉพาะช่วงเวลาที่กำลังเล่นอยู่)
 if "start" in st.session_state and not st.session_state.get("is_ended", False):
     if st.button("📥 ส่งคำตอบ"):
-        st.session_state.is_ended = True  # สั่งให้จบเกมและแสดงผลลัพธ์
+        st.session_state.is_ended = True  # สั่งจบเกมเพื่อแสดงผลลัพธ์
         st.rerun()
 
     time.sleep(1)
     st.rerun()
 
 # ----------------------------------------------------
-# 5. ส่วนตรวจคำตอบ (จะทำงานเมื่อ st.session_state.is_ended == True เท่านั้น)
+# 5. ส่วนตรวจคำตอบ (จะไม่รันเลย จนกว่าจะกดส่งคำตอบหรือเวลาหมด)
 # ----------------------------------------------------
 if st.session_state.get("is_ended", False):
     st.warning("⏰ หมดเวลาทำข้อสอบแล้ว!")
