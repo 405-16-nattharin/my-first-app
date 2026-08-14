@@ -3,13 +3,13 @@ import streamlit as st
 
 st.title("⏱️ เกมเติมศัพท์จับเวลา")
 
-# 1. ปุ่มกดเริ่มจับเวลา (อยู่ด้านบนสุด)
-if st.button("🚀 เริ่มจับเวลา (30 วินาที)"):
-    st.session_state.start = time.time()
-    st.session_state["q1"] = ""
-    st.session_state["q2"] = ""
+# 1. ปุ่มเริ่มเล่นเกม (เคลียร์ค่าทั้งหมดเหมือนรันใหม่ตั้งแต่ต้น)
+if st.button("🎮 เริ่มเล่นเกม"):
+    st.session_state.clear()  # เคลียร์ค่าตัวแปรและคำตอบทั้งหมดใน session_state
+    st.session_state.start = time.time()  # บันทึกเวลาเริ่มเกมใหม่
+    st.rerun()
 
-# 2. แถบแสดงเวลานับถอยหลัง (อยู่ต่อจากปุ่มเริ่มจับเวลา)
+# 2. แถบแสดงเวลานับถอยหลัง (อยู่ต่อจากปุ่มเริ่มเล่นเกม)
 if "start" in st.session_state:
     time_left = int(30 - (time.time() - st.session_state.start))
 
