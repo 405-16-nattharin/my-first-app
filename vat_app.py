@@ -1,4 +1,4 @@
-import streamlit as st
+import streamli as st
 
 # 1. หัวข้อหน้าเว็บ
 st.markdown("## :red[🚨 แจ้งเตือน: ห้าม Print Screen ตัวอย่าง]")
