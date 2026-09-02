@@ -1,4 +1,4 @@
-import streamlit as st
+import streamlit 
 
 #ส่วนที่ 1 หัวข้อหน้าเว็บ (Title สีแดง)
 st.markdown("<h1 style='color: red; text-align: center;'>==ตัวอย่างแอปพลิเคชัน==</h1>",unsafe_allow_html=True,)
