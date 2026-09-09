@@ -3,11 +3,13 @@ import streamlit as st
 
 st.title("⏱️ เกมเติมศัพท์จับเวลา")
 
-# 1. กำหนดค่าเริ่มต้นใน session_state ถ้ายังไม่มี
+# 1. กำหนดค่าเริ่มต้นใน session_state
 if "ans1_val" not in st.session_state:
     st.session_state.ans1_val = ""
 if "ans2_val" not in st.session_state:
     st.session_state.ans2_val = ""
+if "game_started" not in st.session_state:
+    st.session_state.game_started = False
 
 
 # 📌 ฟังก์ชันเคลียร์ค่าเมื่อกดปุ่มเริ่มใหม่
@@ -16,6 +18,7 @@ def reset_game():
     st.session_state.ans2_val = ""  # เคลียร์ค่าช่องข้อ 2
     st.session_state.start = time.time()  # เริ่มเวลาใหม่
     st.session_state.is_ended = False  # ปิด Dialog
+    st.session_state.game_started = True  # ทำการเริ่มเกม
 
 
 # ----------------------------------------------------
@@ -26,7 +29,7 @@ def show_result_dialog(ans1, ans2):
     st.balloons()
     score = 0
 
-    u_ans1 = ans1.strip()
+    u_ans1 = ans1.strip().lower()
     u_ans2 = ans2.strip().lower()
 
     # ตรวจข้อ 1
@@ -59,40 +62,41 @@ def show_result_dialog(ans1, ans2):
 st.button("🎮 เริ่มเล่นเกม", on_click=reset_game)
 
 # 2. แถบแสดงเวลานับถอยหลัง
-if "start" in st.session_state and not st.session_state.get("is_ended", False):
+if st.session_state.get("game_started", False) and not st.session_state.get(
+    "is_ended", False
+):
     time_left = int(30 - (time.time() - st.session_state.start))
 
     if time_left > 0:
-      
+        st.metric(label="⏳ เวลาที่เหลือ", value=f"{time_left} วินาที")
     else:
         st.session_state.is_ended = True
         st.rerun()
 
 st.divider()
 
-# 3. ช่องรับคำตอบ (ใช้ value ผูกกับตัวแปรตรงๆ เพื่อสั่งเคลียร์ได้)
+# 3. ช่องรับคำตอบ
 ans1 = st.text_input(
     "ข้อ 1: An `a _ _ l e` a day keeps the doctor away. 🍎",
-    value=st.session_state.ans1_val,
+    key="ans1_val",
 )
 ans2 = st.text_input(
     "ข้อ 2: Cats love to eat `f _ s h`. 🐟",
-    value=st.session_state.ans2_val,
+    key="ans2_val",
 )
-
-# อัปเดตค่าล่าสุดเข้าตัวแปร
-st.session_state.ans1_val = ans1
-st.session_state.ans2_val = ans2
 
 # ✏️ [พื้นที่สำหรับนักเรียน]: เพิ่มข้อ 3, 4 ตรงนี้
 
 
-# 4. ปุ่มส่งคำตอบ
-if "start" in st.session_state and not st.session_state.get("is_ended", False):
+# 4. ปุ่มส่งคำตอบ และระบบนับถอยหลัง Real-time
+if st.session_state.get("game_started", False) and not st.session_state.get(
+    "is_ended", False
+):
     if st.button("📥 ส่งคำตอบ"):
         st.session_state.is_ended = True
         st.rerun()
 
+    # หน่วงเวลา 1 วินาทีแล้วสั่งรีเฟรชหน้าเฉพาะตอนที่เกมกำลังดำเนินอยู่
     time.sleep(1)
     st.rerun()
 
